@@ -1,5 +1,7 @@
+![SOIL MOISTURE](https://github.com/user-attachments/assets/dfc8b080-ca3a-4bdf-8eb8-824926c54a3e)# NAME: SHARAN S
+# REG ID: 212224040309
 # Monitoring-soil-moisture-value-in-Thing-speak-cloud
-# Uploading soil moisture sensor data in Thing Speak cloud
+
 
 # AIM:
 To monitor the soil moisture value in the Thing speak cloud using soil moisture sensor and ESP32 controller.
@@ -84,8 +86,94 @@ Prototype and build IoT systems without setting up servers or developing web sof
 ![image](https://github.com/user-attachments/assets/5beaf86c-0d5d-4b99-9c22-bb0351f487ab)
 
 # PROGRAM:
+```
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "Galaxy S23";      
+const char* password = "sharan05"; 
+String apiKey = "LO19WTS6BOEHXSRJ"; 
+unsigned long channelID = 3116998;  
+const char* server = "http://api.thingspeak.com/update";
+const int sensorPin = 34; 
+const int ledPin = 2;     
+int sensorValue = 0;
+int sensorPercentage = 0;
+
+void connectWiFi() {
+  Serial.print("Connecting to WiFi");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected to WiFi!");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void sendToThingSpeak(int value) {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String url = String(server) + "?api_key=" + apiKey + "&field1=" + String(value) + "&channel_id=" + String(channelID);
+    http.begin(url);
+    int httpResponseCode = http.GET();
+    if (httpResponseCode > 0) {
+      Serial.print("ThingSpeak Response Code: ");
+      Serial.println(httpResponseCode);
+    } else {
+      Serial.print("Error sending data: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  } else {
+    Serial.println("WiFi not connected!");
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(ledPin, OUTPUT);
+  connectWiFi();
+  Serial.println("Soil Moisture Monitoring ");
+}
+
+void loop() {
+  sensorValue = analogRead(sensorPin);
+  sensorPercentage = map(sensorValue, 4095, 0, 0, 100);  
+  sensorPercentage = constrain(sensorPercentage, 0, 100);
+  Serial.print("Raw Sensor Value: ");
+  Serial.print(sensorValue);
+  Serial.print("  |  Soil Moisture: ");
+  Serial.print(sensorPercentage);
+  Serial.println("%");
+  if (sensorPercentage < 30) {
+    Serial.println("Soil is Dry");
+    digitalWrite(ledPin, HIGH);
+  } else if (sensorPercentage >= 30 && sensorPercentage < 70) {
+    Serial.println("Soil is Moist");
+    digitalWrite(ledPin, LOW);
+  } else {
+    Serial.println("Soil is Wet");
+    digitalWrite(ledPin, LOW);
+  }
+  sendToThingSpeak(sensorPercentage);
+  Serial.println("-----------------------------");
+  delay(20000);
+}
+
+```
 # CIRCUIT DIAGRAM:
+
+
 # OUTPUT:
+# SERIAL MONITOR
+<img width="1920" height="1080" alt="Screenshot (53)" src="https://github.com/user-attachments/assets/013d42cd-318c-435d-9199-c1b72ba25426" />
+
+# THINGSPEAK
+<img width="1920" height="1080" alt="Screenshot (55)" src="https://github.com/user-attachments/assets/adb117d0-d56e-47fe-a879-61b4de98d418" />
+
+
 # RESULT:
 Thus the soil moisture values are updated in the Thing speak cloud using ESP32 controller.
 
