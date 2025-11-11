@@ -1,4 +1,4 @@
-![SOIL MOISTURE](https://github.com/user-attachments/assets/dfc8b080-ca3a-4bdf-8eb8-824926c54a3e)# NAME: SHARAN S
+# NAME: SHARAN S
 # REG ID: 212224040309
 # Monitoring-soil-moisture-value-in-Thing-speak-cloud
 
@@ -164,7 +164,7 @@ void loop() {
 
 ```
 # CIRCUIT DIAGRAM:
-
+![SOIL MOISTURE](https://github.com/user-attachments/assets/dfc8b080-ca3a-4bdf-8eb8-824926c54a3e)
 
 # OUTPUT:
 # SERIAL MONITOR
